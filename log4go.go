@@ -426,7 +426,7 @@ func (log Logger) Info(arg0 interface{}, args ...interface{}) {
 // message is not actually logged, because all formats are processed and all
 // closures are executed to format the error message.
 // See Debug for further explanation of the arguments.
-func (log Logger) Warn(arg0 interface{}, args ...interface{}) error {
+func (log Logger) Warn(arg0 interface{}, args ...interface{}) {
 	const (
 		lvl = WARNING
 	)
@@ -443,13 +443,12 @@ func (log Logger) Warn(arg0 interface{}, args ...interface{}) error {
 		msg = fmt.Sprintf(fmt.Sprint(first)+strings.Repeat(" %v", len(args)), args...)
 	}
 	log.intLogf(lvl, msg)
-	return errors.New(msg)
 }
 
 // Error logs a message at the error log level and returns the formatted error,
 // See Warn for an explanation of the performance and Debug for an explanation
 // of the parameters.
-func (log Logger) Error(arg0 interface{}, args ...interface{}) error {
+func (log Logger) Error(arg0 interface{}, args ...interface{}) {
 	const (
 		lvl = ERROR
 	)
@@ -466,13 +465,12 @@ func (log Logger) Error(arg0 interface{}, args ...interface{}) error {
 		msg = fmt.Sprintf(fmt.Sprint(first)+strings.Repeat(" %v", len(args)), args...)
 	}
 	log.intLogf(lvl, msg)
-	return errors.New(msg)
 }
 
 // Critical logs a message at the critical log level and returns the formatted error,
 // See Warn for an explanation of the performance and Debug for an explanation
 // of the parameters.
-func (log Logger) Critical(arg0 interface{}, args ...interface{}) error {
+func (log Logger) Critical(arg0 interface{}, args ...interface{}) {
 	const (
 		lvl = CRITICAL
 	)
@@ -489,5 +487,4 @@ func (log Logger) Critical(arg0 interface{}, args ...interface{}) error {
 		msg = fmt.Sprintf(fmt.Sprint(first)+strings.Repeat(" %v", len(args)), args...)
 	}
 	log.intLogf(lvl, msg)
-	return errors.New(msg)
 }
