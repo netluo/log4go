@@ -2,7 +2,7 @@
 
 // Package log4go provides level-based and highly configurable logging.
 //
-// Enhanced Logging
+// # Enhanced Logging
 //
 // This is inspired by the logging functionality in Java.  Essentially, you create a Logger
 // object and create output filters for it.  You can send whatever you want to the Logger,
@@ -24,29 +24,28 @@
 // log.Info("The time is now: %s", time.LocalTime().Format("15:04:05 MST 2006/01/02"))
 //
 // Usage notes:
-// - The ConsoleLogWriter does not display the source of the message to standard
-//   output, but the FileLogWriter does.
-// - The utility functions (Info, Debug, Warn, etc) derive their source from the
-//   calling function, and this incurs extra overhead.
+//   - The ConsoleLogWriter does not display the source of the message to standard
+//     output, but the FileLogWriter does.
+//   - The utility functions (Info, Debug, Warn, etc) derive their source from the
+//     calling function, and this incurs extra overhead.
 //
 // Changes from 2.0:
-// - The external interface has remained mostly stable, but a lot of the
-//   internals have been changed, so if you depended on any of this or created
-//   your own LogWriter, then you will probably have to update your code.  In
-//   particular, Logger is now a map and ConsoleLogWriter is now a channel
-//   behind-the-scenes, and the LogWrite method no longer has return values.
+//   - The external interface has remained mostly stable, but a lot of the
+//     internals have been changed, so if you depended on any of this or created
+//     your own LogWriter, then you will probably have to update your code.  In
+//     particular, Logger is now a map and ConsoleLogWriter is now a channel
+//     behind-the-scenes, and the LogWrite method no longer has return values.
 //
 // Future work: (please let me know if you think I should work on any of these particularly)
-// - Log file rotation
-// - Logging configuration files ala log4j
-// - Have the ability to remove filters?
-// - Have GetInfoChannel, GetDebugChannel, etc return a chan string that allows
-//   for another method of logging
-// - Add an XML filter type
+//   - Log file rotation
+//   - Logging configuration files ala log4j
+//   - Have the ability to remove filters?
+//   - Have GetInfoChannel, GetDebugChannel, etc return a chan string that allows
+//     for another method of logging
+//   - Add an XML filter type
 package log4go
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"runtime"
@@ -138,7 +137,10 @@ type Logger map[string]*Filter
 //
 // DEPRECATED: Use make(Logger) instead.
 func NewLogger() Logger {
-	os.Stderr.WriteString("warning: use of deprecated NewLogger\n")
+	_, err := os.Stderr.WriteString("warning: use of deprecated NewLogger\n")
+	if err != nil {
+		return nil
+	}
 	return make(Logger)
 }
 
@@ -147,7 +149,10 @@ func NewLogger() Logger {
 //
 // DEPRECATED: use NewDefaultLogger instead.
 func NewConsoleLogger(lvl Level) Logger {
-	os.Stderr.WriteString("warning: use of deprecated NewConsoleLogger\n")
+	_, err := os.Stderr.WriteString("warning: use of deprecated NewConsoleLogger\n")
+	if err != nil {
+		return nil
+	}
 	return Logger{
 		"stdout": &Filter{lvl, NewConsoleLogWriter(), "DEFAULT"},
 	}
@@ -356,16 +361,16 @@ func (log Logger) Fine(arg0 interface{}, args ...interface{}) {
 
 // Debug is a utility method for debug log messages.
 // The behavior of Debug depends on the first argument:
-// - arg0 is a string
-//   When given a string as the first argument, this behaves like Logf but with
-//   the DEBUG log level: the first argument is interpreted as a format for the
-//   latter arguments.
-// - arg0 is a func()string
-//   When given a closure of type func()string, this logs the string returned by
-//   the closure iff it will be logged.  The closure runs at most one time.
-// - arg0 is interface{}
-//   When given anything else, the log message will be each of the arguments
-//   formatted with %v and separated by spaces (ala Sprint).
+//   - arg0 is a string
+//     When given a string as the first argument, this behaves like Logf but with
+//     the DEBUG log level: the first argument is interpreted as a format for the
+//     latter arguments.
+//   - arg0 is a func()string
+//     When given a closure of type func()string, this logs the string returned by
+//     the closure iff it will be logged.  The closure runs at most one time.
+//   - arg0 is interface{}
+//     When given anything else, the log message will be each of the arguments
+//     formatted with %v and separated by spaces (ala Sprint).
 func (log Logger) Debug(arg0 interface{}, args ...interface{}) {
 	const (
 		lvl = DEBUG
